@@ -8,7 +8,7 @@ pipeline {
         IMAGE_NAME = "notes"
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
-        
+
         GITHUB_CREDENTIALS = credentials('github-token')
         MICROK8S_KUBECONFIG = credentials('kube-config')
         GKE_CREDENTIALS = credentials('gke-key')
@@ -19,12 +19,10 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the Git repository..."
-                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                     sh """
                     git config --global credential.helper store
                     git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/kaharmz/devops-project.git .
-                    """
-                }
+                    """           
             }
         }
 
@@ -64,7 +62,7 @@ pipeline {
                 set -e
                 export KUBECONFIG=${KUBECONFIG}
                 if ! kubectl set image deployment/notes notes=${DOCKER_IMAGE} --record; then
-                    kubectl apply -f devops-project/notes/notes-deployment.yaml
+                    kubectl apply -f gke/notes-deployment.yaml
                 fi
                 """
             }
@@ -81,8 +79,8 @@ pipeline {
                     set -e
                     gcloud auth activate-service-account --key-file=${GKE_KEY}
                     gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project ${PROJECT_ID}
-                    if ! kubectl set image deployment/my-app my-app=${DOCKER_IMAGE} --record; then
-                        kubectl apply -f k8s/deployment.yaml
+                    if ! kubectl set image deployment/notes notes=${DOCKER_IMAGE} --record; then
+                        kubectl apply -f k8s/notes-deployment.yaml
                     fi
                     """
                 }
