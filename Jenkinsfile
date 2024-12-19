@@ -8,7 +8,7 @@ pipeline {
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "kaharmuzakira/${IMAGE_NAME}"
         GCR_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
-        GITHUB_CREDENTIALS = credentials('github-key')
+        SSH_KEY = credentials('github-key')
         MICROK8S_KUBECONFIG = credentials('kube-key')
         GKE_CREDENTIALS = credentials('gke-key')
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
