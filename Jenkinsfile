@@ -6,7 +6,6 @@ pipeline {
         GCR_HOSTNAME = "gcr.io"
         PROJECT_ID = "upheld-setting-436613-s1"
         IMAGE_NAME = "notes"
-        
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "kaharmuzakira/${IMAGE_NAME}"
         GCR_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
