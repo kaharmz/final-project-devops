@@ -16,20 +16,23 @@ pipeline {
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
         
         DOCKER_AUTH = credentials('docker-auth')
-    }
+    
 
-    stages {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the Git repository..."
-                withCredentials([string(credentialsId: 'github-key', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'github-key', keyFileVariable: 'SSH_KEY')]) {
                     sh """
                     git config --global credential.helper store
-                    git clone https://${GITHUB_TOKEN}@github.com/kaharmz/devops-project.git .
+                    mkdir -p ~/.ssh
+                    echo "${SSH_KEY}" > ~/.ssh/id_rsa
+                    chmod 600 ~/.ssh/id_rsa
+                    git clone git@github.com:kaharmz/devops-project.git .
                     """
                 }
             }
         }
+
 
         stage('Build Docker Images') {
             steps {
