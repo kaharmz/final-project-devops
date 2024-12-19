@@ -8,8 +8,8 @@ pipeline {
         IMAGE_NAME = "notes"
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
-        GITHUB_CREDENTIALS = credentials('github-token')
-        MICROK8S_KUBECONFIG = credentials('4b118280-bfbf-405f-9370-172c125c09f0')
+        GITHUB_CREDENTIALS = credentials('kahar-github-key')
+        MICROK8S_KUBECONFIG = credentials('/home/kaharmuzakira/.kube')
         GKE_CREDENTIALS = credentials('gke-key')
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
     }
@@ -18,7 +18,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the Git repository..."
-                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                withCredentials([usernamePassword(credentialsId: 'kahar-github-key', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                     sh """
                     git config --global credential.helper store
                     git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/kaharmz/devops-project.git .
@@ -41,7 +41,7 @@ pipeline {
         stage('Push Images to GCR') {
             steps {
                 echo "Pushing Docker image to GCR..."
-                withCredentials([file(credentialsId: 'gke-sa-key', variable: 'GCR_KEY')]) {
+                withCredentials([file(credentialsId: 'gke-key', variable: 'GCR_KEY')]) {
                     sh """
                     set -e
                     gcloud auth activate-service-account --key-file=${GCR_KEY}
@@ -75,7 +75,7 @@ pipeline {
             }
             steps {
                 echo "Deploying to GKE for branch: main"
-                withCredentials([file(credentialsId: 'gke-sa-key', variable: 'GKE_KEY')]) {
+                withCredentials([file(credentialsId: 'gke-key', variable: 'GKE_KEY')]) {
                     sh """
                     set -e
                     gcloud auth activate-service-account --key-file=${GKE_KEY}
