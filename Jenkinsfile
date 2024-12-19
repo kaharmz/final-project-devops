@@ -8,11 +8,14 @@ pipeline {
         IMAGE_NAME = "notes"
         
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
-        DOCKER_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
+        DOCKER_IMAGE = "kaharmuzakira/${IMAGE_NAME}"
+        GCR_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
         GITHUB_CREDENTIALS = credentials('kahar-github-key')
         MICROK8S_KUBECONFIG = credentials('kube-key')
         GKE_CREDENTIALS = credentials('gke-key')
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
+        
+        DOCKER_AUTH = credentials('docker-auth')
     }
 
     stages {
@@ -39,15 +42,28 @@ pipeline {
             }
         }
 
+        stage('Push Image to Docker Hub') {
+            steps {
+                echo "Pushing Docker image to Docker Hub..."
+                withCredentials([usernamePassword(credentialsId: 'docker-auth', variable: 'DOCKER_AUTH')]) {
+                    sh """
+                    set -e
+                    docker login ${DOCKER_AUTH}
+                    docker push ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+
         stage('Push Images to GCR') {
             steps {
                 echo "Pushing Docker image to GCR..."
-                withCredentials([file(credentialsId: 'gke-key', variable: 'GCR_KEY')]) {
+                withCredentials([file(credentialsId: 'gke-key', variable: 'GKE_CREDENTIALS')]) {
                     sh """
                     set -e
-                    gcloud auth activate-service-account --key-file=${GCR_KEY}
+                    gcloud auth activate-service-account --key-file=${GKE_CREDENTIALS}
                     gcloud auth configure-docker --quiet
-                    docker push ${DOCKER_IMAGE}
+                    docker push ${GCR_HOSTNAME}
                     """
                 }
             }
@@ -79,11 +95,8 @@ pipeline {
                 withCredentials([file(credentialsId: 'gke-key', variable: 'GKE_KEY')]) {
                     sh """
                     set -e
-                    gcloud auth activate-service-account --key-file=${GKE_KEY}
-                    gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project ${PROJECT_ID}
-                    if ! kubectl set image deployment/my-app my-app=${DOCKER_IMAGE} --record; then
-                        kubectl apply -f k8s/deployment.yaml
-                    fi
+                    kubectl set image deployment/notes notes=${GCR_HOSTNAME} --record; then
+                    kubectl apply -f k8s/deployment.yaml
                     """
                 }
             }
