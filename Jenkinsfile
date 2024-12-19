@@ -1,5 +1,4 @@
 pipeline {
-
     agent any
 
     environment {
@@ -16,6 +15,7 @@ pipeline {
         DOCKER_AUTH = credentials('docker-auth')
     }
 
+    stages {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the Git repository..."
@@ -63,7 +63,7 @@ pipeline {
                     set -e
                     gcloud auth activate-service-account --key-file=${GKE_CREDENTIALS}
                     gcloud auth configure-docker --quiet
-                    docker push ${GCR_HOSTNAME}
+                    docker push ${GCR_IMAGE}
                     """
                 }
             }
@@ -95,8 +95,9 @@ pipeline {
                 withCredentials([file(credentialsId: 'gke-key', variable: 'GKE_KEY')]) {
                     sh """
                     set -e
-                    kubectl set image deployment/notes notes=${GCR_HOSTNAME} --record; then
-                    kubectl apply -f k8s/deployment.yaml
+                    gcloud auth activate-service-account --key-file=${GKE_KEY}
+                    gcloud container clusters get-credentials my-gke-cluster --region us-central1 --project ${PROJECT_ID}
+                    kubectl set image deployment/notes notes=${GCR_IMAGE} --record || kubectl apply -f k8s/deployment.yaml
                     """
                 }
             }
