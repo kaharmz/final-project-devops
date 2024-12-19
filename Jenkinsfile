@@ -8,7 +8,6 @@ pipeline {
         IMAGE_NAME = "notes"
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
-
         GITHUB_CREDENTIALS = credentials('github-token')
         MICROK8S_KUBECONFIG = credentials('kube-config')
         GKE_CREDENTIALS = credentials('gke-key')
