@@ -10,7 +10,7 @@ pipeline {
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "kaharmuzakira/${IMAGE_NAME}"
         GCR_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
-        GITHUB_CREDENTIALS = credentials('kahar-github-key')
+        GITHUB_CREDENTIALS = credentials('github-key')
         MICROK8S_KUBECONFIG = credentials('kube-key')
         GKE_CREDENTIALS = credentials('gke-key')
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
@@ -22,7 +22,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the Git repository..."
-                withCredentials([string(credentialsId: 'kahar-github-key', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([string(credentialsId: 'github-key', variable: 'GITHUB_TOKEN')]) {
                     sh """
                     git config --global credential.helper store
                     git clone https://${GITHUB_TOKEN}@github.com/kaharmz/devops-project.git .
