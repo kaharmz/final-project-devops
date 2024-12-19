@@ -41,7 +41,7 @@ pipeline {
         stage('Push Images to GCR') {
             steps {
                 echo "Pushing Docker image to GCR..."
-                withCredentials([file(credentialsId: 'gke-sa-key', variable: 'GCR_KEY')]) {
+                withCredentials([file(credentialsId: 'gke-key', variable: 'GCR_KEY')]) {
                     sh """
                     set -e
                     gcloud auth activate-service-account --key-file=${GCR_KEY}
@@ -75,7 +75,7 @@ pipeline {
             }
             steps {
                 echo "Deploying to GKE for branch: main"
-                withCredentials([file(credentialsId: 'gke-sa-key', variable: 'GKE_KEY')]) {
+                withCredentials([file(credentialsId: 'gke-key', variable: 'GKE_KEY')]) {
                     sh """
                     set -e
                     gcloud auth activate-service-account --key-file=${GKE_KEY}
