@@ -14,7 +14,6 @@ pipeline {
         MICROK8S_KUBECONFIG = credentials('kube-key')
         GKE_CREDENTIALS = credentials('gke-key')
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
-        
         DOCKER_AUTH = credentials('docker-auth')
     }
 
