@@ -10,7 +10,7 @@ pipeline {
         DOCKER_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
         GITHUB_CREDENTIALS = credentials('github-token')
         MICROK8S_KUBECONFIG = credentials('4b118280-bfbf-405f-9370-172c125c09f0')
-        GKE_CREDENTIALS = credentials('gke-sa-key')
+        GKE_CREDENTIALS = credentials('gke-key')
         KUBECONFIG = "${WORKSPACE}/kubeconfig"
     }
 
