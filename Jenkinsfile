@@ -6,6 +6,7 @@ pipeline {
         GCR_HOSTNAME = "gcr.io"
         PROJECT_ID = "upheld-setting-436613-s1"
         IMAGE_NAME = "notes"
+        
         BRANCH_NAME = "${env.GIT_BRANCH?.split('/')[1] ?: 'default-branch'}"
         DOCKER_IMAGE = "${GCR_HOSTNAME}/${PROJECT_ID}/${IMAGE_NAME}:${BRANCH_NAME}"
         GITHUB_CREDENTIALS = credentials('kahar-github-key')
@@ -18,7 +19,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the Git repository..."
-                withCredentials([string(credentialsId: 'kahar-github-keyn', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([string(credentialsId: 'kahar-github-key', variable: 'GITHUB_TOKEN')]) {
                     sh """
                     git config --global credential.helper store
                     git clone https://${GITHUB_TOKEN}@github.com/kaharmz/devops-project.git .
