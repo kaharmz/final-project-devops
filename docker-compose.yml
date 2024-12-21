@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: gcr.io/upheld-setting-436613-s1/notes:${BUILD_NUMBER}
     container_name: app
     ports:
       - "3000:3000" 
