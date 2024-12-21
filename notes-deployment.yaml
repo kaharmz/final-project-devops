@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: notes
-        image: gcr.io/upheld-setting-436613-s1/notes:v1
+        image: gcr.io/upheld-setting-436613-s1/notes:latest
         env:
         - name: NODE_ENV
           valueFrom:

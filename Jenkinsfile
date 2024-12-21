@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker compose build  ${GCR_IMAGE}:${BUILD_NUMBER} ."
+                    sh "docker compose build  ${GCR_IMAGE}:v${BUILD_NUMBER} ."
                 }
             }
         }
@@ -28,7 +28,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker push ${GCR_IMAGE}:${BUILD_NUMBER}
+                        docker push ${GCR_IMAGE}:v${BUILD_NUMBER}
                     """
                 }
             }
