@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker compose build ${APP_NAME} ."
+                    sh "docker compose -f /var/lib/jenkins/workspace/notes/docker-compose.yaml build ${APP_NAME} ."
                 }
             }
         }
