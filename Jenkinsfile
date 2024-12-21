@@ -2,11 +2,14 @@ pipeline {
     agent any
 
     environment {
+
         BUILD_TAG = "${BUILD_NUMBER}"
+        APP_NAME = 'notes'
         PROJECT_ID = 'upheld-setting-436613-s1'
-        GCR_IMAGE = 'gcr.io/${PROJECT_ID}/notes'
+        GCR_IMAGE = 'gcr.io/${PROJECT_ID}/${APP_NAME}'
         DEV_KUBECONFIG = '/home/kaharmuzakira/.kube/config-microk8s'
         PROD_KUBECONFIG = '/home/kaharmuzakira/.kube/config-gke'
+        
     }
 
     stages {
@@ -20,7 +23,7 @@ pipeline {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker compose build ${GCR_IMAGE}:${BUILD_TAG} ."
+                    sh "docker compose build ${APP_NAME} ."
                 }
             }
         }
@@ -29,7 +32,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker push ${GCR_IMAGE}:${BUILD_TAG}
+                        docker tag ${APP_NAME}> gcr.io/${PROJECT_ID}/${APP_NAME}:${BUILD_NUMBER}
+                        docker push ${GCR_IMAGE}:v${BUILD_TAG}
                     """
                 }
             }
