@@ -2,11 +2,13 @@ pipeline {
     agent any
 
     environment {
+
+        BUILD_TAG = "${BUILD_NUMBER}"
         PROJECT_ID = 'upheld-setting-436613-s1'
-        GCR_IMAGE = 'gcr.io/${PROJECT_ID}/notes'
+        GCR_IMAGE = 'gcr.io/${PROJECT_ID}/notes:v${BUILD_TAG}'
         DEV_KUBECONFIG = '/home/kaharmuzakira/.kube/config-microk8s'
         PROD_KUBECONFIG = '/home/kaharmuzakira/.kube/config-gke'
-        BUILD_TAG = "${BUILD_NUMBER}"
+        
     }
 
     stages {
