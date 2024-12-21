@@ -1,9 +1,9 @@
 services:
-  app:
+  notes:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app
+    container_name: notes
     ports:
       - "3000:3000" 
     links:
@@ -32,7 +32,7 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - app
+      - notes
 
 volumes:
   mongo-data:
