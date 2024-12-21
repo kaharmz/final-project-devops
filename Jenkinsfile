@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker buildx build ${APP_NAME} ."
+                    sh "docker buildx build --tag ${APP_NAME}> gcr.io/${PROJECT_ID}/${APP_NAME}:${BUILD_NUMBER} ."
                 }
             }
         }
@@ -31,8 +31,7 @@ pipeline {
         stage('Push Docker Image to GCR') {
             steps {
                 script {
-                    sh """
-                        docker buildx build --tag ${APP_NAME}> gcr.io/${PROJECT_ID}/${APP_NAME}:${BUILD_NUMBER}
+                    sh """                   
                         docker buildx build --push ${GCR_IMAGE}:v${BUILD_TAG}
                     """
                 }
