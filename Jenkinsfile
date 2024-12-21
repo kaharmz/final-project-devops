@@ -5,7 +5,7 @@ pipeline {
 
         BUILD_TAG = "${BUILD_NUMBER}"
         PROJECT_ID = 'upheld-setting-436613-s1'
-        GCR_IMAGE = 'gcr.io/${PROJECT_ID}/notes:v${BUILD_TAG}'
+        GCR_IMAGE = 'gcr.io/${PROJECT_ID}/notes'
         DEV_KUBECONFIG = '/home/kaharmuzakira/.kube/config-microk8s'
         PROD_KUBECONFIG = '/home/kaharmuzakira/.kube/config-gke'
         
