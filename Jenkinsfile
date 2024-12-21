@@ -6,6 +6,7 @@ pipeline {
         GCR_IMAGE = 'gcr.io/${PROJECT_ID}/notes'
         DEV_KUBECONFIG = '/home/kaharmuzakira/.kube/config-microk8s'
         PROD_KUBECONFIG = '/home/kaharmuzakira/.kube/config-gke'
+        BUILD_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -19,7 +20,7 @@ pipeline {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker compose build  ${GCR_IMAGE}:v${BUILD_NUMBER} ."
+                    sh "docker compose build  ${GCR_IMAGE}:v${BUILD_TAG} ."
                 }
             }
         }
@@ -28,7 +29,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker push ${GCR_IMAGE}:v${BUILD_NUMBER}
+                        docker push ${GCR_IMAGE}:v${BUILD_TAG}
                     """
                 }
             }
