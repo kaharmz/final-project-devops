@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker build -t ${GCR_IMAGE}:${branch} ."
+                    sh "DOCKER_BUILDKIT=1 docker build -t ${GCR_IMAGE}:${branch} ."
                 }
             }
         }
