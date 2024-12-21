@@ -15,6 +15,16 @@ pipeline {
             }
         }
 
+        stage('Get Version') {
+            steps {
+                script {
+                    def version = sh(script: 'git describe --tags || git rev-parse --short HEAD', returnStdout: true).trim()
+                    echo "Version: ${version}"
+                    currentBuild.displayName = version
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
