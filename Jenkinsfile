@@ -15,21 +15,11 @@ pipeline {
             }
         }
 
-        stage('Get Version') {
-            steps {
-                script {
-                    def version = sh(script: 'git describe --tags || git rev-parse --short HEAD', returnStdout: true).trim()
-                    echo "Version: ${version}"
-                    currentBuild.displayName = version
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
                     def branch = env.BRANCH_NAME
-                    sh "docker compose build  ${GCR_IMAGE}:${env.BRANCH_NAME} ."
+                    sh "docker compose build  ${GCR_IMAGE}:${BUILD_NUMBER} ."
                 }
             }
         }
@@ -38,7 +28,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker push ${GCR_IMAGE}:${env.BRANCH_NAME}
+                        docker push ${GCR_IMAGE}:${BUILD_NUMBER}
                     """
                 }
             }
